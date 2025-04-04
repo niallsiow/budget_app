@@ -2,9 +2,9 @@ from django.db import models
 from django.utils.timezone import now
 
 
-
 # Just add models and fields one at a time, figure out the rendering etc.
 # happy enough with the current commented out models setup though
+
 
 # Maybe should include currency type in Account
 class Account(models.Model):
@@ -41,6 +41,3 @@ class Account(models.Model):
 
 #     def __str__(self):
 #         return f"{self.date}: {self.amount}"
-
-
-
