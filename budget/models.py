@@ -5,6 +5,8 @@ from django.utils.timezone import now
 
 # Just add models and fields one at a time, figure out the rendering etc.
 # happy enough with the current commented out models setup though
+
+# Maybe should include currency type in Account
 class Account(models.Model):
     user = models.ForeignKey("auth.User", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)

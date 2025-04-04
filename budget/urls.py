@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import index
+from .views import AccountListView
 
 urlpatterns = [
-    path("", index),
+    path("", AccountListView.as_view(), name="home"),
 ]
