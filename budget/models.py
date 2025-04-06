@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
+from django.urls import reverse
 
 
 # Just add models and fields one at a time, figure out the rendering etc.
@@ -13,8 +14,13 @@ class Account(models.Model):
     name = models.CharField(max_length=100)
     balance = models.DecimalField(max_digits=20, decimal_places=2)
 
+    def get_absolute_url(self):
+        return reverse("account_detail", kwargs={"pk": self.pk}) 
+    
     def __str__(self):
         return f"{self.user} {self.name} {self.balance}"
+
+    
 
 
 # class Category(models.Model):
