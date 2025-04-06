@@ -6,7 +6,8 @@ from django.utils.timezone import now
 # happy enough with the current commented out models setup though
 
 
-# Maybe should include currency type in Account
+# Modify later to include currency type in Account model
+#   can be used for display purposes in views
 class Account(models.Model):
     user = models.ForeignKey("auth.User", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)

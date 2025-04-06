@@ -6,7 +6,7 @@
 
   {% for account in account_list %}
     <div>
-      <h2>{{ account.name }}</h2>
+      <a href="{% url 'account_detail' account.pk %}"><h2>{{ account.name }}</h2></a>
       <p>{{ account.balance }}</p>
     </div>
   {% endfor %}
