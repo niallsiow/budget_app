@@ -40,3 +40,17 @@ class BudgetTests(TestCase):
         self.assertEqual(no_response.status_code, 404)
         self.assertContains(response, "Test Account")
         self.assertTemplateUsed(response, "account_detail.html")
+
+    def test_post_createview(self):
+        self.client.login(username="testuser", password="secret")
+        response = self.client.post(
+            reverse("account_new"),
+            {
+                "name": "New Account",
+                "balance": 5000,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Account.objects.last().name, "New Account")
+        self.assertEqual(Account.objects.last().balance, 5000)
