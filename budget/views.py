@@ -1,6 +1,7 @@
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
+from django.urls import reverse_lazy
 
 from .models import Account
 
@@ -29,3 +30,9 @@ class AccountUpdateView(UpdateView):
     model = Account
     template_name = "account_edit.html"
     fields = ["name", "balance"]
+
+
+class AccountDeleteView(DeleteView):
+    model = Account
+    template_name = "account_delete.html"
+    success_url = reverse_lazy("home")
