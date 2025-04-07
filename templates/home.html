@@ -3,7 +3,8 @@
 {% block content %}
 
   {% if user.is_authenticated %}
-    <a href="{% url 'account_new' %}">Create New Account</a>
+    <p><a href="{% url 'account_new' %}">Create New Account</a></p>
+    <p><a href="{% url 'transaction_new' %}">New Transaction</a></p>
 
     <h2>All Accounts</h2>
 

@@ -5,6 +5,7 @@ from .views import (
     AccountCreateView,
     AccountUpdateView,
     AccountDeleteView,
+    TransactionCreateView,
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path(
         "account/<int:pk>/delete/", AccountDeleteView.as_view(), name="account_delete"
     ),
+    path("transaction/new/", TransactionCreateView.as_view(), name="transaction_new"),
 ]

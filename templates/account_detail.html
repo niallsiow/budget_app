@@ -8,4 +8,10 @@
   <a href="{% url 'account_edit' account.pk %}">Edit</a>
   <a href="{% url 'account_delete' account.pk %}">Delete</a>
 
+  {% for transaction in account.transaction_set.all %}
+    <p>{{ transaction.date }}: {{ transaction.amount }}</p>
+  {% empty %}
+    <p>No transactions found for this account.</p>
+  {% endfor %}
+
 {% endblock %}
