@@ -24,16 +24,19 @@ class BudgetTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_account_listview(self):
+        self.client.login(username="testuser", password="secret")
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Test Account")
         self.assertTemplateUsed(response, "home.html")
 
     def test_url_exists_at_correct_location_detailview(self):
+        self.client.login(username="testuser", password="secret")
         response = self.client.get("/account/1/")
         self.assertEqual(response.status_code, 200)
 
     def test_account_detailview(self):
+        self.client.login(username="testuser", password="secret")
         response = self.client.get(
             reverse("account_detail", kwargs={"pk": self.account.pk})
         )
