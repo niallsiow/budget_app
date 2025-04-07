@@ -34,7 +34,9 @@ class BudgetTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_account_detailview(self):
-        response = self.client.get(reverse("account_detail", kwargs={"pk": self.account.pk}))
+        response = self.client.get(
+            reverse("account_detail", kwargs={"pk": self.account.pk})
+        )
         no_response = self.client.get("/account/10000/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(no_response.status_code, 404)
@@ -56,7 +58,7 @@ class BudgetTests(TestCase):
 
     def test_account_editview(self):
         self.client.login(username="testuser", password="secret")
-        
+
         new_account = Account.objects.create(
             user=self.user, name="New Account", balance=5
         )
@@ -79,5 +81,7 @@ class BudgetTests(TestCase):
         )
         self.assertTrue(Account.objects.filter(id=new_account.id).exists())
 
-        response = self.client.post(reverse("account_delete", kwargs={"pk": new_account.pk}))
+        response = self.client.post(
+            reverse("account_delete", kwargs={"pk": new_account.pk})
+        )
         self.assertFalse(Account.objects.filter(id=new_account.id).exists())

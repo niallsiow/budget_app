@@ -15,12 +15,10 @@ class Account(models.Model):
     balance = models.DecimalField(max_digits=20, decimal_places=2)
 
     def get_absolute_url(self):
-        return reverse("account_detail", kwargs={"pk": self.pk}) 
-    
+        return reverse("account_detail", kwargs={"pk": self.pk})
+
     def __str__(self):
         return f"{self.user} {self.name} {self.balance}"
-
-    
 
 
 # class Category(models.Model):
