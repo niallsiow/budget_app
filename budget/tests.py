@@ -50,7 +50,24 @@ class BudgetTests(TestCase):
                 "balance": 5000,
             },
         )
-
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Account.objects.last().name, "New Account")
         self.assertEqual(Account.objects.last().balance, 5000)
+
+    def test_post_editview(self):
+        self.client.login(username="testuser", password="secret")
+        
+        new_account = Account.objects.create(
+            user=self.user, name="New Account", balance=5
+        )
+
+        response = self.client.post(
+            reverse("account_edit", kwargs={"pk": new_account.pk}),
+            {
+                "name": "Edited Account",
+                "balance": 20,
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Account.objects.last().name, "Edited Account")
+        self.assertEqual(Account.objects.last().balance, 20)
