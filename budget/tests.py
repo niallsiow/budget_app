@@ -88,3 +88,14 @@ class BudgetTests(TestCase):
             reverse("account_delete", kwargs={"pk": new_account.pk})
         )
         self.assertFalse(Account.objects.filter(id=new_account.id).exists())
+
+    def test_account_access(self):
+        new_user = get_user_model().objects.create_user(
+            username="newuser", email="newuser@email.com", password="secret"
+        )
+
+        self.client.login(username="newuser", password="secret")
+
+        # Attempt to access detail view of class object, should fail
+        response = self.client.get("/account/1/")
+        self.assertEqual(response.status_code, 404)
