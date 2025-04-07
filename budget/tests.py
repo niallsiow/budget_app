@@ -71,3 +71,13 @@ class BudgetTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Account.objects.last().name, "Edited Account")
         self.assertEqual(Account.objects.last().balance, 20)
+
+    def test_account_deleteview(self):
+        self.client.login(username="testuser", password="secret")
+        new_account = Account.objects.create(
+            user=self.user, name="New Account", balance=5
+        )
+        self.assertTrue(Account.objects.filter(id=new_account.id).exists())
+
+        response = self.client.post(reverse("account_delete", kwargs={"pk": new_account.pk}))
+        self.assertFalse(Account.objects.filter(id=new_account.id).exists())
