@@ -4,16 +4,21 @@
 
   {% if user.is_authenticated %}
     <a href="{% url 'account_new' %}">Create New Account</a>
+
+    <h2>All Accounts</h2>
+
+    {% for account in account_list %}
+      <div>
+        <a href="{% url 'account_detail' account.pk %}"><h3>{{ account.name }}</h3></a>
+        <p>{{ account.balance }}</p>
+        <p>{{ account.user }}</p>
+      </div>
+    {% endfor %}
+
+  {% else %}
+
+    <p>Please login to view your accounts</p>
+  
   {% endif %}
-
-  <h1>All Accounts</h1>
-
-  {% for account in account_list %}
-    <div>
-      <a href="{% url 'account_detail' account.pk %}"><h2>{{ account.name }}</h2></a>
-      <p>{{ account.balance }}</p>
-      <p>{{ account.user }}</p>
-    </div>
-  {% endfor %}
 
 {% endblock content %}

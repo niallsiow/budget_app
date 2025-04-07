@@ -10,10 +10,17 @@ class AccountListView(ListView):
     model = Account
     template_name = "home.html"
 
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Account.objects.filter(user=self.request.user)
+
 
 class AccountDetailView(DetailView):
     model = Account
     template_name = "account_detail.html"
+
+    def get_queryset(self):
+        return Account.objects.filter(user=self.request.user)
 
 
 class AccountCreateView(CreateView):
@@ -31,8 +38,14 @@ class AccountUpdateView(UpdateView):
     template_name = "account_edit.html"
     fields = ["name", "balance"]
 
+    def get_queryset(self):
+        return Account.objects.filter(user=self.request.user)
+
 
 class AccountDeleteView(DeleteView):
     model = Account
     template_name = "account_delete.html"
     success_url = reverse_lazy("home")
+
+    def get_queryset(self):
+        return Account.objects.filter(user=self.request.user)
