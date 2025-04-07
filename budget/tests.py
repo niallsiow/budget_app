@@ -23,7 +23,7 @@ class BudgetTests(TestCase):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
 
-    def test_account_list_view(self):
+    def test_account_listview(self):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Test Account")
@@ -33,7 +33,7 @@ class BudgetTests(TestCase):
         response = self.client.get("/account/1/")
         self.assertEqual(response.status_code, 200)
 
-    def test_account_detail_view(self):
+    def test_account_detailview(self):
         response = self.client.get(reverse("account_detail", kwargs={"pk": self.account.pk}))
         no_response = self.client.get("/account/10000/")
         self.assertEqual(response.status_code, 200)
@@ -41,7 +41,7 @@ class BudgetTests(TestCase):
         self.assertContains(response, "Test Account")
         self.assertTemplateUsed(response, "account_detail.html")
 
-    def test_post_createview(self):
+    def test_account_createview(self):
         self.client.login(username="testuser", password="secret")
         response = self.client.post(
             reverse("account_new"),
@@ -54,7 +54,7 @@ class BudgetTests(TestCase):
         self.assertEqual(Account.objects.last().name, "New Account")
         self.assertEqual(Account.objects.last().balance, 5000)
 
-    def test_post_editview(self):
+    def test_account_editview(self):
         self.client.login(username="testuser", password="secret")
         
         new_account = Account.objects.create(
