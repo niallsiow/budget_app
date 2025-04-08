@@ -94,7 +94,9 @@ class BudgetTests(TestCase):
         new_account = Account.objects.create(user=self.user, name="New Account")
         self.assertTrue(Account.objects.filter(id=new_account.id).exists())
 
-        response = self.client.get(reverse("account_delete", kwargs={"pk": new_account.id}))
+        response = self.client.get(
+            reverse("account_delete", kwargs={"pk": new_account.id})
+        )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, new_account.name)
         self.assertTemplateUsed(response, "account_delete.html")
@@ -116,3 +118,43 @@ class BudgetTests(TestCase):
         # Attempt to access detail view of class object, should fail
         response = self.client.get("/account/1/")
         self.assertEqual(response.status_code, 404)
+
+    def test_signup(self):
+        response = self.client.get(reverse("signup"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed("registration/signup.html")
+
+        response = self.client.post(
+            reverse("signup"),
+            {
+                "username": "signuptestuser",
+                "password1": "testpass123",
+                "password2": "testpass123",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("login"))
+
+    def test_login(self):
+        response = self.client.get(reverse("login"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed("registration/login.html")
+
+        response = self.client.post(
+            reverse("login"), {"username": "testuser", "password": "secret"}
+        )
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("home"))
+
+    def test_logout(self):
+        self.client.login(username="testuser", password="secret")
+
+        response = self.client.get(reverse("home"))
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
+        self.assertContains(response, "Log Out")
+
+        response = self.client.post(reverse("logout"))
+        self.assertFalse(response.wsgi_request.user.is_authenticated)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("home"))
