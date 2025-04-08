@@ -2,18 +2,8 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 from django.urls import reverse, reverse_lazy
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from .models import Account, Transaction
-
-
-@receiver(post_save, sender=Transaction)
-def update_account(sender, instance, created, **kwargs):
-    # Automatically update account balance when new transaction is created
-    if created:
-        instance.account.balance -= instance.amount
-        instance.account.save()
 
 
 class AccountListView(ListView):
@@ -36,7 +26,7 @@ class AccountDetailView(DetailView):
 class AccountCreateView(CreateView):
     model = Account
     template_name = "account_new.html"
-    fields = ["name", "balance"]
+    fields = ["name"]
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -46,7 +36,7 @@ class AccountCreateView(CreateView):
 class AccountUpdateView(UpdateView):
     model = Account
     template_name = "account_edit.html"
-    fields = ["name", "balance"]
+    fields = ["name"]
 
     def get_queryset(self):
         return Account.objects.filter(user=self.request.user)
@@ -73,5 +63,16 @@ class TransactionCreateView(CreateView):
 
     def get_success_url(self):
         return reverse("account_detail", kwargs={"pk": self.object.account.pk})
+        
 
+class TransactionUpdateView(UpdateView):
+    model = Transaction
+    template_name = "transaction_edit.html"
+    fields = ["amount", "date"]
+
+
+class TransactionDeleteView(DeleteView):
+    model = Transaction
+    template_name = "transaction_delete.html"
+    success_url = reverse_lazy("home")
     

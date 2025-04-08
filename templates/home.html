@@ -11,7 +11,7 @@
     {% for account in account_list %}
       <div>
         <a href="{% url 'account_detail' account.pk %}"><h3>{{ account.name }}</h3></a>
-        <p>{{ account.balance }}</p>
+        <p>{{ account.get_balance }}</p>
         <p>{{ account.user }}</p>
       </div>
     {% endfor %}

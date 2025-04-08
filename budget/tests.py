@@ -12,12 +12,11 @@ class BudgetTests(TestCase):
             username="testuser", email="test@email.com", password="secret"
         )
         cls.account = Account.objects.create(
-            user=cls.user, name="Test Account", balance=2000
+            user=cls.user, name="Test Account"
         )
 
     def test_account_model(self):
         self.assertEqual(self.account.name, "Test Account")
-        self.assertEqual(self.account.balance, 2000)
 
     def test_url_exists_at_correct_location_listview(self):
         response = self.client.get("/")
@@ -52,35 +51,30 @@ class BudgetTests(TestCase):
             reverse("account_new"),
             {
                 "name": "New Account",
-                "balance": 5000,
             },
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Account.objects.last().name, "New Account")
-        self.assertEqual(Account.objects.last().balance, 5000)
 
     def test_account_editview(self):
         self.client.login(username="testuser", password="secret")
-
         new_account = Account.objects.create(
-            user=self.user, name="New Account", balance=5
+            user=self.user, name="New Account"
         )
 
         response = self.client.post(
             reverse("account_edit", kwargs={"pk": new_account.pk}),
             {
                 "name": "Edited Account",
-                "balance": 20,
             },
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Account.objects.last().name, "Edited Account")
-        self.assertEqual(Account.objects.last().balance, 20)
 
     def test_account_deleteview(self):
         self.client.login(username="testuser", password="secret")
         new_account = Account.objects.create(
-            user=self.user, name="New Account", balance=5
+            user=self.user, name="New Account"
         )
         self.assertTrue(Account.objects.filter(id=new_account.id).exists())
 

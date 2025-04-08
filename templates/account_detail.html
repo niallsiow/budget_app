@@ -9,7 +9,7 @@
   <a href="{% url 'account_delete' account.pk %}">Delete</a>
 
   {% for transaction in account.transaction_set.all %}
-    <p>{{ transaction.date }}: {{ transaction.amount }}</p>
+    <p>{{ transaction.date }}: {{ transaction.amount }} {{ transaction.get_current_balance }} <a href="{% url 'transaction_edit' transaction.pk %}">Edit</a> <a href="{% url 'transaction_delete' transaction.pk %}">Delete</a></p>
   {% empty %}
     <p>No transactions found for this account.</p>
   {% endfor %}
