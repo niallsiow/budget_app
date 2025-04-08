@@ -3,13 +3,13 @@
 {% block content %}
 
   <h2>{{ account.name }}</h2>
-  <p>{{ account.get_balance }}</p>
+  <h3>£{{ account.get_balance }}</h3>
 
   <a href="{% url 'account_edit' account.pk %}">Edit</a>
   <a href="{% url 'account_delete' account.pk %}">Delete</a>
 
   {% for transaction in account.transaction_set.all %}
-    <p>{{ transaction.date }}: {{ transaction.amount }} {{ transaction.get_current_balance }} <a href="{% url 'transaction_edit' transaction.pk %}">Edit</a> <a href="{% url 'transaction_delete' transaction.pk %}">Delete</a></p>
+    <p>{{ transaction.date }}: £{{ transaction.amount }}, Account Balance: £{{ transaction.get_current_balance }} <a href="{% url 'transaction_edit' transaction.pk %}">Edit</a> <a href="{% url 'transaction_delete' transaction.pk %}">Delete</a></p>
   {% empty %}
     <p>No transactions found for this account.</p>
   {% endfor %}

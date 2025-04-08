@@ -11,7 +11,7 @@
     {% for account in account_list %}
       <div>
         <a href="{{ account.get_absolute_url }}"><h3>{{ account.name }}</h3></a>
-        <p>{{ account.get_balance }}</p>
+        <p>£{{ account.get_balance }}</p>
         <p>{{ account.user }}</p>
       </div>
     {% endfor %}
