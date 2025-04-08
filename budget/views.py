@@ -63,7 +63,7 @@ class TransactionCreateView(CreateView):
 
     def get_success_url(self):
         return reverse("account_detail", kwargs={"pk": self.object.account.pk})
-        
+
 
 class TransactionUpdateView(UpdateView):
     model = Transaction
@@ -75,4 +75,3 @@ class TransactionDeleteView(DeleteView):
     model = Transaction
     template_name = "transaction_delete.html"
     success_url = reverse_lazy("home")
-    

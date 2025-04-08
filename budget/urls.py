@@ -19,6 +19,14 @@ urlpatterns = [
         "account/<int:pk>/delete/", AccountDeleteView.as_view(), name="account_delete"
     ),
     path("transaction/new/", TransactionCreateView.as_view(), name="transaction_new"),
-    path("transaction/<int:pk>/edit/", TransactionUpdateView.as_view(), name="transaction_edit"),
-    path("transaction/<int:pk>/delete/", TransactionDeleteView.as_view(), name="transaction_delete"),
+    path(
+        "transaction/<int:pk>/edit/",
+        TransactionUpdateView.as_view(),
+        name="transaction_edit",
+    ),
+    path(
+        "transaction/<int:pk>/delete/",
+        TransactionDeleteView.as_view(),
+        name="transaction_delete",
+    ),
 ]

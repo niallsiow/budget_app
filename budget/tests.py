@@ -11,9 +11,7 @@ class BudgetTests(TestCase):
         cls.user = get_user_model().objects.create_user(
             username="testuser", email="test@email.com", password="secret"
         )
-        cls.account = Account.objects.create(
-            user=cls.user, name="Test Account"
-        )
+        cls.account = Account.objects.create(user=cls.user, name="Test Account")
 
     def test_account_model(self):
         self.assertEqual(self.account.name, "Test Account")
@@ -26,7 +24,7 @@ class BudgetTests(TestCase):
         self.client.login(username="testuser", password="secret")
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Test Account")
+        self.assertContains(response, self.account.name)
         self.assertTemplateUsed(response, "home.html")
 
     def test_url_exists_at_correct_location_detailview(self):
@@ -42,11 +40,16 @@ class BudgetTests(TestCase):
         no_response = self.client.get("/account/10000/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(no_response.status_code, 404)
-        self.assertContains(response, "Test Account")
+        self.assertContains(response, self.account.name)
         self.assertTemplateUsed(response, "account_detail.html")
 
     def test_account_createview(self):
         self.client.login(username="testuser", password="secret")
+
+        response = self.client.get(reverse("account_new"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "account_new.html")
+
         response = self.client.post(
             reverse("account_new"),
             {
@@ -55,12 +58,24 @@ class BudgetTests(TestCase):
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Account.objects.last().name, "New Account")
+        self.assertRedirects(
+            response,
+            reverse(
+                "account_detail",
+                kwargs={"pk": Account.objects.get(name="New Account").id},
+            ),
+        )
 
     def test_account_editview(self):
         self.client.login(username="testuser", password="secret")
-        new_account = Account.objects.create(
-            user=self.user, name="New Account"
+        new_account = Account.objects.create(user=self.user, name="New Account")
+
+        response = self.client.get(
+            reverse("account_edit", kwargs={"pk": new_account.id})
         )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, new_account.name)
+        self.assertTemplateUsed(response, "account_edit.html")
 
         response = self.client.post(
             reverse("account_edit", kwargs={"pk": new_account.pk}),
@@ -70,18 +85,26 @@ class BudgetTests(TestCase):
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Account.objects.last().name, "Edited Account")
+        self.assertRedirects(
+            response, reverse("account_detail", kwargs={"pk": new_account.id})
+        )
 
     def test_account_deleteview(self):
         self.client.login(username="testuser", password="secret")
-        new_account = Account.objects.create(
-            user=self.user, name="New Account"
-        )
+        new_account = Account.objects.create(user=self.user, name="New Account")
         self.assertTrue(Account.objects.filter(id=new_account.id).exists())
+
+        response = self.client.get(reverse("account_delete", kwargs={"pk": new_account.id}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, new_account.name)
+        self.assertTemplateUsed(response, "account_delete.html")
 
         response = self.client.post(
             reverse("account_delete", kwargs={"pk": new_account.pk})
         )
         self.assertFalse(Account.objects.filter(id=new_account.id).exists())
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("home"))
 
     def test_account_access(self):
         new_user = get_user_model().objects.create_user(
