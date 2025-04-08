@@ -3,7 +3,7 @@
 {% block content %}
 
   <h2>{{ account.name }}</h2>
-  <p>{{ account.balance }}</p>
+  <p>{{ account.get_balance }}</p>
 
   <a href="{% url 'account_edit' account.pk %}">Edit</a>
   <a href="{% url 'account_delete' account.pk %}">Delete</a>
