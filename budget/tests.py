@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+import datetime
 
-from .models import Account
+from .models import Account, Transaction
 
 
 class BudgetTests(TestCase):
@@ -156,5 +157,69 @@ class BudgetTests(TestCase):
 
         response = self.client.post(reverse("logout"))
         self.assertFalse(response.wsgi_request.user.is_authenticated)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("home"))
+
+    def test_transaction_createview(self):
+        self.client.login(username="testuser", password="secret")
+
+        response = self.client.get(reverse("transaction_new"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "transaction_new.html")
+
+        response = self.client.post(
+            reverse("transaction_new"),
+            {"account": self.account.id, "amount": 500, "date": "2025-01-01"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Transaction.objects.last().account, self.account)
+        self.assertEqual(Transaction.objects.last().amount, 500)
+        self.assertEqual(Transaction.objects.last().date, datetime.date(2025, 1, 1))
+        self.assertRedirects(
+            response, reverse("account_detail", kwargs={"pk": self.account.id})
+        )
+
+    def test_transaction_editview(self):
+        self.client.login(username="testuser", password="secret")
+        new_transaction = Transaction.objects.create(
+            account=self.account, amount=10, date=datetime.date(2025, 2, 2)
+        )
+
+        response = self.client.get(
+            reverse("transaction_edit", kwargs={"pk": new_transaction.id})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, new_transaction.amount)
+        self.assertTemplateUsed(response, "transaction_edit.html")
+
+        response = self.client.post(
+            reverse("transaction_edit", kwargs={"pk": new_transaction.id}),
+            {"amount": 225, "date": "2025-03-03"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Transaction.objects.last().amount, 225)
+        self.assertEqual(Transaction.objects.last().date, datetime.date(2025, 3, 3))
+        self.assertRedirects(
+            response, reverse("account_detail", kwargs={"pk": self.account.id})
+        )
+
+    def test_transaction_deleteview(self):
+        self.client.login(username="testuser", password="secret")
+        new_transaction = Transaction.objects.create(
+            account=self.account, amount=300, date=datetime.date(2025, 2, 2)
+        )
+        self.assertTrue(Transaction.objects.filter(id=new_transaction.id).exists())
+
+        response = self.client.get(
+            reverse("transaction_delete", kwargs={"pk": new_transaction.id})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, new_transaction.amount)
+        self.assertTemplateUsed(response, "transaction_delete.html")
+
+        response = self.client.post(
+            reverse("transaction_delete", kwargs={"pk": new_transaction.id})
+        )
+        self.assertFalse(Transaction.objects.filter(id=new_transaction.id).exists())
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("home"))

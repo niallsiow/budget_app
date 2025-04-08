@@ -70,6 +70,9 @@ class TransactionUpdateView(UpdateView):
     template_name = "transaction_edit.html"
     fields = ["amount", "date"]
 
+    def get_success_url(self):
+        return reverse("account_detail", kwargs={"pk": self.object.account.pk})
+
 
 class TransactionDeleteView(DeleteView):
     model = Transaction
